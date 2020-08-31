@@ -66,9 +66,30 @@ public interface TileIndicatorsConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "highlightHoveredTile",
-		name = "Highlight hovered tile",
-		description = "Highlights tile player is hovering with mouse"
+		keyName = "highlightHoveredPathTiles",
+		name = "Highlight path to hovered tile",
+		description = "Highlights path to the tile player is hovering with mouse"
+	)
+	default boolean highlightHoveredPathTiles()
+	{
+		return false;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "highlightHoveredPathColor",
+			name = "Color of current hovered path highlighting",
+			description = "Configures the highlight color of the path to hovered tile"
+	)
+	default Color highlightHoveredPathColor()
+	{
+		return new Color(0, 0, 127, 0);
+	}
+
+	@ConfigItem(
+			keyName = "highlightHoveredTile",
+			name = "Highlight hovered tile",
+			description = "Highlights tile player is hovering with mouse"
 	)
 	default boolean highlightHoveredTile()
 	{

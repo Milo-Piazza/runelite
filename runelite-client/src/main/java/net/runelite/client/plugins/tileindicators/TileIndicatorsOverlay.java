@@ -31,6 +31,8 @@ import java.awt.Polygon;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
+import net.runelite.api.Tile;
+import net.runelite.api.World;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.ui.overlay.Overlay;
@@ -63,6 +65,45 @@ public class TileIndicatorsOverlay extends Overlay
 			if (client.getSelectedSceneTile() != null)
 			{
 				renderTile(graphics, client.getSelectedSceneTile().getLocalLocation(), config.highlightHoveredColor());
+			}
+		}
+
+		if (config.highlightHoveredPathTiles())
+		{
+			WorldPoint currPoint = client.getLocalPlayer().getWorldLocation();
+			Tile selectedTile = client.getSelectedSceneTile();
+			if (selectedTile != null && currPoint != null)
+			{
+				WorldPoint selectedPoint = selectedTile.getWorldLocation();
+				int xDist = selectedPoint.getX() - currPoint.getX();
+				int yDist = selectedPoint.getY() - currPoint.getY();
+				int dx = 0, dy = 0;
+				if (Math.abs(xDist) > Math.abs(yDist))
+				{
+					dx = (int) Math.signum((float) xDist);
+				}
+				else
+				{
+					dy = (int) Math.signum((float) yDist);
+				}
+				while (Math.abs(xDist) != Math.abs(yDist))
+				{
+					currPoint = currPoint.dx(dx).dy(dy);
+					LocalPoint pt = LocalPoint.fromWorld(client, currPoint.getX(), currPoint.getY());
+					renderTile(graphics, pt, config.highlightHoveredPathColor());
+					xDist = selectedPoint.getX() - currPoint.getX();
+					yDist = selectedPoint.getY() - currPoint.getY();
+				}
+				dx = (int) Math.signum((float) xDist);
+				dy = (int) Math.signum((float) yDist);
+				while (xDist != 0 && yDist != 0)
+				{
+					currPoint = currPoint.dx(dx).dy(dy);
+					LocalPoint pt = LocalPoint.fromWorld(client, currPoint.getX(), currPoint.getY());
+					renderTile(graphics, pt, config.highlightHoveredPathColor());
+					xDist = selectedPoint.getX() - currPoint.getX();
+					yDist = selectedPoint.getY() - currPoint.getY();
+				}
 			}
 		}
 
